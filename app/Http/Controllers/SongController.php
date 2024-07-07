@@ -90,10 +90,16 @@ class SongController extends Controller
     public function destroy(int $id): RedirectResponse {
         $song = Song::find($id);
 
-        // Delete S3
+        // Delete object storage file
         $url = config('filesystems.disks.do.endpoint_url');
+        $folder = config('filesystems.disks.do.folder');
+
         $path = str_replace($url, "", $song->audio_file);
+        $fileName = str_replace("$url/$folder/", "", $song->audio_file);
+
+        // Delete the file from DO and purge cache
         Storage::disk('do')->delete($path);
+        $this->cdnService->purge($fileName);
 
         $song->delete();
 
