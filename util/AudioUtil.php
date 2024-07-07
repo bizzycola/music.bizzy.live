@@ -1,4 +1,5 @@
 <?php
+
 namespace Util;
 
 use Illuminate\Support\Facades\Log;
@@ -6,6 +7,28 @@ use \getID3;
 
 class AudioUtil
 {
+    /**
+     * Parse a local audio file and return the duration in seconds
+     * 
+     * @param string $path Path to the local audio file
+     * @return int Duration in seconds
+     */
+    public static function ParseDurationFromFile(string $path): int
+    {
+        $duration = 0;
+
+        try {
+            // Initialize getID3 engine
+            $getID3 = new getID3;
+            $ThisFileInfo = $getID3->analyze($path);
+            $duration = (int)$ThisFileInfo['playtime_seconds'];
+        } catch (\Exception $e) {
+            Log::error('[AudioUtil] Path duration parse failed: ' . $e);
+        }
+
+        return $duration;
+    }
+
     /**
      * Parse a remote audio file and return the duration in seconds
      * @param string $remotefilename URL of the remote audio file
@@ -24,11 +47,9 @@ class AudioUtil
                         fwrite($fp_local, $buffer);
                     }
                     fclose($fp_local);
-                    
+
                     // Initialize getID3 engine
-                    $getID3 = new getID3;
-                    $ThisFileInfo = $getID3->analyze($localtempfilename);
-                    $duration = (int)$ThisFileInfo['playtime_seconds'];
+                    $duration = AudioUtil::ParseDurationFromFile($localtempfilename);
 
                     // Delete temporary file
                     unlink($localtempfilename);

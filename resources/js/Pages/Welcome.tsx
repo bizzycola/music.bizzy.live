@@ -1,6 +1,8 @@
 import { useRef, useEffect, useState } from 'react'
 import { ListPlayer, ListPlayerContext, listInfo } from 'react-list-player';
 import { IndexProps } from '@/types';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Head } from '@inertiajs/react';
 import '../../css/frontend.css'
 function fmtMSS(s: number) { s = Math.floor(s); return (s - (s %= 60)) / 60 + (9 < s ? ':' : ':0') + s }
 
@@ -93,6 +95,7 @@ export default function Welcome({ songs }: IndexProps<{ laravelVersion: string, 
 
     return (
         <>
+            <Head title="Home" />
             <div className="card w-full">
                 <ListPlayerContext.Provider value={{ selectedTrack, setSelectedTrack, isPlaying, setIsPlaying, isMuted, setIsMuted }}>
                     <div className="app mPlayer">

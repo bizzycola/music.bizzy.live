@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Services\CdnService;
+use App\Services\DOCdnService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Bind DigitalOcean CDN service
+        $this->app->bind(CdnService::class, DOCdnService::class);
     }
 }

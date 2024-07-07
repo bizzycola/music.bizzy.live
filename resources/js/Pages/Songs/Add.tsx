@@ -16,7 +16,7 @@ export default function Add({ auth }: PageProps) {
     const albumInput = useRef<HTMLInputElement>(null);
     const songUrlInput = useRef<HTMLInputElement>(null);
 
-    const { data, setData, errors, post, reset, processing, recentlySuccessful } = useForm({
+    const { data, setData, errors, post, reset, processing, recentlySuccessful, progress } = useForm({
         title: '',
         artist: '',
         album: '',
@@ -38,7 +38,7 @@ export default function Add({ auth }: PageProps) {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <form onSubmit={addSong} className="space-y-6 p-6">
+                        <form onSubmit={addSong} className="space-y-6 p-6" encType="multipart/form-data">
                             { /* Title */}
                             <div>
                                 <InputLabel htmlFor="title" value="Title" />
@@ -89,19 +89,24 @@ export default function Add({ auth }: PageProps) {
 
                             { /* Song URL */}
                             <div>
-                                <InputLabel htmlFor="songUrl" value="Audio File URL" />
+                                <InputLabel htmlFor="songUrl" value="Audio File" />
 
                                 <TextInput
                                     id="songUrl"
                                     ref={songUrlInput}
-                                    value={data.songUrl}
-                                    onChange={(e) => setData('songUrl', e.target.value)}
-                                    type="text"
+                                    onChange={(e) => setData('songUrl', (e.target.files as any)[0])}
+                                    type="file"
                                     className="mt-1 block w-full"
                                 />
 
                                 <InputError message={errors.songUrl} className="mt-2" />
                             </div>
+
+                            {progress && (
+                                <progress value={progress.percentage} max="100">
+                                    {progress.percentage}%
+                                </progress>
+                            )}
 
                             <div className="flex items-center gap-4">
                                 <PrimaryButton disabled={processing}>Add</PrimaryButton>
